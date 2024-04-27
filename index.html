@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Connection Test</title>
+</head>
+<body>
+    <button id="btn">Add Data to Database</button>
+    <div id="status"></div>
+
+    <script type="application/javascript">
+        // Define a global variable to store the IP address
+        let ipAddress;
+    
+        // Define the function to handle the JSONP response and store the IP address
+        function getIP(json) {
+            // Store the IP address in the global variable
+            ipAddress = json.ip;
+        }
+    </script>
+    <script type="application/javascript" src="http://ipinfo.io/?format=jsonp&callback=getIP"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDDA7q-uT4_WqhF_JUWPxTuo1OdCx8_smo",
+          authDomain: "oussama-bc426.firebaseapp.com",
+          projectId: "oussama-bc426",
+          storageBucket: "oussama-bc426.appspot.com",
+          messagingSenderId: "269845848390",
+          appId: "1:269845848390:web:b1462c677ebdf83c87c547",
+          measurementId: "G-FZV6SKE9Y0"
+        };
+
+        // Initialize Firebase app
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        function encodeIPAddress(ipAddress) {
+        // Replace each '.' with 'z'
+        let encodedIP = ipAddress.replace(/\./g, 'z');
+        
+        // Replace each digit with a corresponding uppercase letter
+        encodedIP = encodedIP.replace(/\d/g, function(match) {
+            // Convert digit to corresponding letter ('0' -> 'A', '1' -> 'B', ..., '9' -> 'J')
+            return String.fromCharCode(match.charCodeAt(0) + 17);
+        });
+
+        return encodedIP;
+    }
+
+    // Function to add data to the database
+    function addData(encode) {
+            const dataRef = ref(db, 'ipAddress');
+            set(dataRef, { 
+                ip : encode 
+            })
+            .then(() => {
+                console.log('Data added successfully');
+                document.getElementById('status').textContent = 'Data added successfully';
+            })
+            .catch((error) => {
+                console.error('Error adding data:', error);
+                document.getElementById('status').textContent = 'Error adding data';
+            });
+        }
+
+    document.getElementById('btn').addEventListener("click", function() {
+        // Example IP address
+        
+        // Encode the IP address
+        const encodedIP = encodeIPAddress(ipAddress);
+        
+        // Log the encoded IP address
+        console.log("Encoded IP address:", encodedIP);
+        
+        // Add the encoded IP address to the database
+        addData(encodedIP);
+    });
+    </script>
+</body>
+</html>
