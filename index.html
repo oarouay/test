@@ -6,7 +6,7 @@
     <title>Database Connection Test</title>
 </head>
 <body>
-    <button id="btn">surprise</button>
+    <h1 id="hone"></h1>
     <div id="status"></div>
 
     <script type="application/javascript">
@@ -34,7 +34,10 @@
           measurementId: "G-FZV6SKE9Y0"
         };
 
-        // Initialize Firebase app
+        const myHeading = document.getElementById('myHeading');
+
+    // Write text inside the <h1> element
+    myHeading.textContent = ipAddress;
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         
